@@ -250,7 +250,7 @@ struct Grid {
             std::cout << std::endl;
         }
         std::cout << "\n\n";
-        std::cout << "Vous avez encore : " << nbflag << " flag\n";
+        std::cout << "Vous avez : " << nbflag << " flag\n";
     }
 
     int getNumberOfAdjacentMine(int cellRow, int cellCol)
@@ -265,7 +265,7 @@ struct Grid {
 
     void floodFill(int startRow, int startCol)
     {
-        if (values[startRow][startCol] == DISPLAY)
+        if (values[startRow][startCol] == DISPLAY || values[startRow][startCol] == MINE)
         {
             return;
         }
@@ -467,7 +467,7 @@ int main() {
             std::cin >> x;
             std::cout << "Saisir y : \n";
             std::cin >> y;
-            if (x > largeur || y > hauteur)
+            if (x <= grid.width || y <= grid.height)
             {
                 y--;
                 x--;
@@ -475,7 +475,7 @@ int main() {
             }
 
             else
-                std::cout << "\nErreur coordonné\n";
+                std::cout << "\nErreur coordonne\n";
 
             
         }
@@ -524,24 +524,28 @@ int main() {
             grid.show();
         }
         else {
-            if (grid.values[y][x] == MINE && grid.flag[y][x] == NOFLAG) 
-            {
-                std::cout << "\nTu as perdu";
-                grid.defeat = true;
-            }
-            else if (grid.flag[y][x] == NOFLAG) {
+
+            if (grid.flag[y][x] == NOFLAG) {
                 grid.floodFill(y, x);
             }
 
 
         }
 
-
         grid.show();
         clear();
+
+        if (grid.values[y][x] == MINE && grid.flag[y][x] == NOFLAG)
+        {
+            grid.defeat = true;
+            grid.show();
+            std::cout << "\nTu as perdu";
+            break;
+        }
         if (grid.WinCondition())
         {
             grid.show();
+            grid.nbflag = 0;
             std::cout << "\nTu as gagne";
             break;
         }
